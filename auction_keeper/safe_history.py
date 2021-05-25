@@ -55,17 +55,16 @@ class SAFEHistory:
         self.cache_block = from_block
         self.cache = {}
 
-    def get_safes(self) -> Dict[Address, SAFE]:
+    def get_safes(self, to_block) -> Dict[Address, SAFE]:
         """Returns a list of safes indexed by address"""
-        return self._get_safes(use_graph=self.graph_endpoints is not None)
+        return self._get_safes(to_block, use_graph=self.graph_endpoints is not None)
 
-    def _get_safes(self, use_graph: bool = True) -> Dict[Address, SAFE]:
+    def _get_safes(self, to_block, use_graph: bool = True) -> Dict[Address, SAFE]:
         start = datetime.now()
         safe_addresses = set()
         mods = []
 
         from_block = max(0, self.cache_block - self.cache_lookback)
-        to_block = self.web3.eth.blockNumber
         # If graph is enabled and last block is old enough, use graph. Otherwise, use node.
         if use_graph and to_block - from_block > self.graph_block_threshold:
             fetched_graph = False
